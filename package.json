@@ -1,0 +1,45 @@
+{
+  "name": "ffmpegapi",
+  "version": "1.0.0",
+  "description": "API for FFMPEG, media conversion utility",
+  "main": "dist/app.js",
+  "bin" : { "ffmpegapi" : "./app.js" },
+  "license": "ISC",
+  "scripts": {
+    "test": "jest",
+    "lint:check": "eslint . --ext .ts",
+    "lint:fix": "npm run lint:check -- --fix",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json",
+    "build-and-lib-check": "npm run build && tsc -p tsconfig.lib-check.json",
+    "check": "npm run build-and-lib-check && npm run lint:check && npm run format:check && npm run test",
+    "run": "npm run build && node dist/app.js"
+  },
+  "dependencies": {
+    "busboy": "~0.3.1",
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
+    "express-readme": "0.0.5",
+    "fluent-ffmpeg": "^2.1.2",
+    "express-list-endpoints": "4.0.1",
+    "unique-filename": "^1.1.1",
+    "winston": "^3.2.1",
+    "archiver": "^4.0.1"
+  },
+  "devDependencies": {
+    "@detachhead/eslint-config": "^0.0.6",
+    "@jest/types": "^27.2.5",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.10.5",
+    "eslint": "^7.17.0",
+    "jest": "^27.2.5",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "source-map-support": "^0.5.19",
+    "ts-jest": "^27.0.6",
+    "ts-node": "^10.2.1",
+    "typed-nodejs-assert": "^1.1.0",
+    "typescript": "^4.4.0-beta"
+  }
+}

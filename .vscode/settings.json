@@ -1,0 +1,21 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.formatOnSave": true,
+    "prettier.configPath": ".prettierrc.json",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.organizeImports": true
+    },
+    "eslint.validate": ["typescript"],
+    "git.allowForcePush": true,
+    "git.autofetch": "all",
+    "git.autoStash": true,
+    "git.pruneOnFetch": true,
+    "git.rebaseWhenSync": true,
+    "git.suggestSmartCommit": false,
+    "git.supportCancellation": true,
+    "git.useCommitInputAsStashMessage": true,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "files.eol": "\n"
+}

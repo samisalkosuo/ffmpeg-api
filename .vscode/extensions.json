@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "orta.vscode-jest",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph"
+    ]
+}

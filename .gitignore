@@ -10,7 +10,6 @@ dev.dockerfile
 .ebextensions
 nbproject
 public
-package-lock.json
 input
 
 node-ffmpeg.zip
@@ -21,3 +20,6 @@ node-ffmpeg.zip
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 /nbproject/private/
+
+/dist/
+*.log
