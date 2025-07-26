@@ -1,33 +1,35 @@
-var express = require('express')
+const express = require('express');
+const multer = require('multer');
 const ffmpeg = require('fluent-ffmpeg');
 
 const logger = require('../utils/logger.js');
 const utils = require('../utils/utils.js');
 
-var router = express.Router();
+const router = express.Router();
 
-//probe input file and return metadata
-router.post('/', function (req, res,next) {
+// Configure multer to save uploaded files temporarily
+const upload = multer({ dest: 'uploads/' }); // adjust folder path if needed
 
-    let savedFile = res.locals.savedFile;
+// POST /probe - receives uploaded file, probes metadata, deletes file, returns metadata
+router.post('/', upload.single('file'), function (req, res, next) {
+    const savedFile = req.file?.path;
+
+    if (!savedFile) {
+        logger.error('No file uploaded in /probe request');
+        return res.status(400).json({ error: 'No file uploaded.' });
+    }
+
     logger.debug(`Probing ${savedFile}`);
-    
-    //ffmpeg processing...
-    var ffmpegCommand = ffmpeg(savedFile)
-    
-    ffmpegCommand.ffprobe(function(err, metadata) {
-        if (err)
-        {
-            next(err);            
-        }
-        else
-        {
-            utils.deleteFile(savedFile);        
-            res.status(200).send(metadata);
-        }
-    
-    });
 
+    ffmpeg(savedFile).ffprobe(function (err, metadata) {
+        if (err) {
+            logger.error(`ffprobe failed: ${err.message}`);
+            return next(err);
+        }
+
+        utils.deleteFile(savedFile); // optional cleanup
+        res.status(200).json(metadata);
+    });
 });
 
-module.exports = router
+module.exports = router;
