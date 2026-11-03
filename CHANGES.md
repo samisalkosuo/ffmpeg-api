@@ -1,6 +1,6 @@
-﻿= Changes
+# Changes
 
-=== 2.0
+### 2.0
 
 * Rewritten in Python and FastAPI. Node.js and the `pkg` binary are gone.
 * Image is built on Red Hat UBI 10 (`ubi10/ubi-minimal` with Python 3.14) instead of `jrottenberg/ffmpeg`.
@@ -15,16 +15,16 @@
 * MIT license.
 * The Node.js version is kept on a separate legacy branch.
 
-=== 0.3
+### 0.3
 
 * Added EXTERNAL_PORT env variable.
 
-=== 0.2
+### 0.2
 
 * Added extract images and audio endpoints.
 * Added probe endpoint.
 * Major refactoring.
 
-=== 0.1
+### 0.1
 
 * Initial version.
