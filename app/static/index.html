@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FFMPEG API</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+  code, pre { background: #f3f3f3; padding: .1rem .3rem; border-radius: 3px; }
+  pre { padding: .8rem; overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>FFMPEG API</h1>
+<p>Convert audio, video and image files with FFmpeg over HTTP.</p>
+<ul>
+  <li><a href="/docs">Interactive API documentation (Swagger UI)</a></li>
+  <li><a href="/openapi.json">OpenAPI document (JSON)</a></li>
+  <li><a href="/endpoints">Endpoints (JSON)</a></li>
+  <li><a href="https://github.com/samisalkosuo/ffmpeg-api">Source code and README</a></li>
+</ul>
+<h2>Example</h2>
+<pre>curl -F "file=@input.wav" http://127.0.0.1:3000/convert/audio/to/mp3 &gt; output.mp3</pre>
+</body>
+</html>

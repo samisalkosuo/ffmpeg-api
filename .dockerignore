@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+.bob
+local
+samples
+__pycache__
+.pytest_cache
+.ruff_cache
+src
+*.md
+*.adoc

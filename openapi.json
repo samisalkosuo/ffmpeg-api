@@ -1,0 +1,1035 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FFMPEG API",
+    "summary": "REST API for converting audio, video and image files with FFmpeg.",
+    "description": "\nConvert audio, video and image files with [FFmpeg](https://ffmpeg.org/) over HTTP.\n\n* Upload a file as `multipart/form-data` (form field `file`, exactly one file).\n* Conversion endpoints return the converted file as the response body.\n* Extract endpoints return audio, images or an archive of images from a video.\n* `POST /probe` returns the media metadata as JSON.\n\nThe service has no authentication. Run it in a trusted network or behind a reverse proxy.\n",
+    "contact": {
+      "name": "ffmpeg-api on GitHub",
+      "url": "https://github.com/samisalkosuo/ffmpeg-api"
+    },
+    "license": {
+      "name": "MIT",
+      "identifier": "MIT"
+    },
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/convert/audio/to/mp3": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "summary": "Convert audio to MP3",
+        "description": "Converts an audio file to MP3 with the `libmp3lame` encoder.",
+        "operationId": "convertAudioToMp3",
+        "requestBody": {
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The MP3 file.",
+            "content": {
+              "audio/mpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/convert/audio/to/wav": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "summary": "Convert audio to WAV",
+        "description": "Converts an audio file to 16-bit PCM WAV.",
+        "operationId": "convertAudioToWav",
+        "requestBody": {
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The WAV file.",
+            "content": {
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/convert/video/to/mp4": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "summary": "Convert video to MP4",
+        "description": "Converts a video file to a small web friendly MP4: H.264 (high profile), 15 fps, height 640, about 500 kbit/s, and AAC audio at 128 kbit/s.",
+        "operationId": "convertVideoToMp4",
+        "requestBody": {
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The MP4 file.",
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/convert/image/to/jpg": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "summary": "Convert image to JPG",
+        "description": "Converts an image file (for example TIFF or PNG) to JPG.",
+        "operationId": "convertImageToJpg",
+        "requestBody": {
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The JPG file.",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/extract/audio": {
+      "post": {
+        "tags": [
+          "Extract"
+        ],
+        "summary": "Extract the audio track of a video",
+        "description": "Extracts the audio track of a video as a WAV file. By default the result is mono (1 channel). Use `mono=no` to keep all channels of the input.",
+        "operationId": "extractAudio",
+        "parameters": [
+          {
+            "name": "mono",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "`yes` (default) or `true`: 1 channel. Any other value: all channels.",
+              "default": "yes",
+              "title": "Mono"
+            },
+            "description": "`yes` (default) or `true`: 1 channel. Any other value: all channels."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The WAV file.",
+            "content": {
+              "audio/wav": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/extract/images": {
+      "post": {
+        "tags": [
+          "Extract"
+        ],
+        "summary": "Extract images (frames) from a video",
+        "description": "Extracts frames of a video as PNG images, 1 frame per second by default.\n\nWithout `compress` the response is JSON that lists a download URL for each image (see `GET /video/extract/download/{filename}`). With `compress=zip` or `compress=gzip` the response is a ZIP or tar.gz archive of all images.",
+        "operationId": "extractImages",
+        "parameters": [
+          {
+            "name": "fps",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Frames per second to extract. 0.5 is one image every 2 seconds.",
+              "default": 1,
+              "title": "Fps"
+            },
+            "description": "Frames per second to extract. 0.5 is one image every 2 seconds."
+          },
+          {
+            "name": "compress",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "zip",
+                    "gzip"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return all images as a `zip` or `gzip` (tar.gz) archive.",
+              "title": "Compress"
+            },
+            "description": "Return all images as a `zip` or `gzip` (tar.gz) archive."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON list of images, or an archive when `compress` is used.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractedImages"
+                }
+              },
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/gzip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/extract/download/{filename}": {
+      "get": {
+        "tags": [
+          "Extract"
+        ],
+        "summary": "Download an extracted image or archive",
+        "description": "Downloads a file created by `POST /video/extract/images`. The file is deleted from the server after the download, unless `delete=no` is used.",
+        "operationId": "downloadExtractedFile",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "File name from the extract images response.",
+              "examples": [
+                "ba0f565c-0001.png"
+              ],
+              "title": "Filename"
+            },
+            "description": "File name from the extract images response."
+          },
+          {
+            "name": "delete",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "`no` keeps the file on the server. Default is to delete it.",
+              "default": "true",
+              "title": "Delete"
+            },
+            "description": "`no` keeps the file on the server. Default is to delete it."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/gzip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such file."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/probe": {
+      "post": {
+        "tags": [
+          "Probe"
+        ],
+        "summary": "Probe a media file",
+        "description": "Returns the metadata of an audio, video or image file. The result is the same JSON as `ffprobe -of json -show_streams -show_format -show_chapters <file>`.",
+        "operationId": "probeMedia",
+        "requestBody": {
+          "description": "Multipart form with exactly one file. Non-file fields are rejected.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Any file that FFmpeg can read."
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProbeResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: not a multipart upload, no file, or a non-file field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "File is larger than FILE_SIZE_LIMIT_BYTES.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FFmpeg failed, for example because the input is not valid media.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/endpoints": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "List service endpoints",
+        "description": "Returns the endpoints of the service as JSON.",
+        "operationId": "listEndpoints",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Endpoint"
+                  },
+                  "type": "array",
+                  "title": "Response Listendpoints"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Health check",
+        "description": "Returns `{\"status\": \"ok\"}` when the service is running. Used by the container health check.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {},
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Endpoint": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "examples": [
+              "/convert/audio/to/mp3"
+            ]
+          },
+          "methods": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Methods",
+            "examples": [
+              [
+                "POST"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "path",
+          "methods"
+        ],
+        "title": "Endpoint"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Human readable error message."
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "examples": [
+          {
+            "error": "route not found"
+          }
+        ]
+      },
+      "ExtractedImage": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "File name of the extracted image.",
+            "examples": [
+              "ba0f565c-0001.png"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "URL for downloading the image. Downloading deletes the image from the server unless `delete=no` is used.",
+            "examples": [
+              "http://127.0.0.1:3000/video/extract/download/ba0f565c-0001.png"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "url"
+        ],
+        "title": "ExtractedImage"
+      },
+      "ExtractedImages": {
+        "properties": {
+          "totalfiles": {
+            "type": "integer",
+            "title": "Totalfiles",
+            "description": "Number of extracted images.",
+            "examples": [
+              5
+            ]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Human readable note about the download URLs."
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractedImage"
+            },
+            "type": "array",
+            "title": "Files",
+            "description": "Extracted images, in frame order."
+          }
+        },
+        "type": "object",
+        "required": [
+          "totalfiles",
+          "description",
+          "files"
+        ],
+        "title": "ExtractedImages"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ProbeResult": {
+        "properties": {
+          "streams": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Streams",
+            "description": "One entry per stream."
+          },
+          "chapters": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Chapters",
+            "description": "Chapters, if any."
+          },
+          "format": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Format",
+            "description": "Container information."
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ProbeResult",
+        "description": "Output of `ffprobe -of json -show_streams -show_format -show_chapters`.",
+        "examples": [
+          {
+            "chapters": [],
+            "format": {
+              "bit_rate": "1782208",
+              "duration": "60.056000",
+              "filename": "/tmp/5f69ae62-input.mov",
+              "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+              "nb_streams": 2,
+              "size": "13379040"
+            },
+            "streams": [
+              {
+                "codec_name": "h264",
+                "codec_type": "video",
+                "height": 720,
+                "index": 0,
+                "width": 1280
+              },
+              {
+                "channels": 2,
+                "codec_name": "aac",
+                "codec_type": "audio",
+                "index": 1,
+                "sample_rate": "48000"
+              }
+            ]
+          }
+        ]
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Convert",
+      "description": "Convert audio, video and image files."
+    },
+    {
+      "name": "Extract",
+      "description": "Extract audio and images from a video."
+    },
+    {
+      "name": "Probe",
+      "description": "Read media metadata."
+    },
+    {
+      "name": "Service",
+      "description": "Service information."
+    }
+  ]
+}

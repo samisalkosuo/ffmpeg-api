@@ -1,3 +1,20 @@
+﻿= Changes
+
+=== 2.0
+
+* Rewritten in Python and FastAPI. Node.js and the `pkg` binary are gone.
+* Image is built on Red Hat UBI 10 (`ubi10/ubi-minimal` with Python 3.14) instead of `jrottenberg/ffmpeg`.
+* FFmpeg is built from source in the image build, latest release by default (`FFMPEG_VERSION`). Includes libx264 and libmp3lame.
+* Full OpenAPI 3.1 document (`/openapi.json`) and Swagger UI (`/docs`) served from the container, no CDN.
+* New `/health` endpoint, container `HEALTHCHECK`.
+* API paths, parameters and response formats are unchanged.
+* MP4 audio is encoded with FFmpeg's native AAC encoder (was `libfdk_aac`).
+* Errors are JSON `{"error": "..."}`. Too large uploads return 413 (was 500).
+* Download endpoint only serves files created by the extract images endpoint.
+* Tests with pytest. Test media is generated with FFmpeg.
+* MIT license.
+* The Node.js version is kept on a separate legacy branch.
+
 === 0.3
 
 * Added EXTERNAL_PORT env variable.
